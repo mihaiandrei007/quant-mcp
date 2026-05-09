@@ -165,6 +165,14 @@ This is an educational / analytical tool, not investment advice. Always verify o
 
 ---
 
+## Companion pack
+
+If you build with Claude Code / Cursor and want the full set of `CLAUDE.md` conventions, Cursor rules, and pre-wired MCP configs that this server was designed to integrate with, see **[Claude Code Pack — Python Quant Edition](https://mihaitman.gumroad.com/l/quant-claude-pack)** on Gumroad. €9, 7 files, single-user license, lifetime v1.x updates.
+
+This OSS server stays fully free and MIT regardless. The pack just saves you the rule-writing if you want everything pre-codified.
+
+---
+
 ## Roadmap
 
 Prioritised:
