@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>quant-mcp — auditable UCITS ETF analytics for your AI client</title>
+<meta name="description" content="Model Context Protocol server exposing UCITS ETF analytics — compare, factor metrics, Monte Carlo projection — with formulas, sources, and disclaimers in every payload.">
+<meta name="theme-color" content="#0a0a0a">
+
+<meta property="og:title" content="quant-mcp — auditable UCITS ETF analytics for your AI client">
+<meta property="og:description" content="MCP server exposing UCITS ETF analytics with formulas and disclaimers in every payload. MIT licensed.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mihaiandrei007.github.io/quant-mcp/">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #141414;
+    --surface-2: #1c1c1c;
+    --border: #2a2a2a;
+    --text: #f5f5f5;
+    --text-2: #a3a3a3;
+    --text-3: #6b6b6b;
+    --accent: #4ade80;
+    --accent-dim: rgba(74, 222, 128, 0.12);
+    --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .container {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ─── header / nav ─── */
+  header.site {
+    border-bottom: 1px solid var(--border);
+    padding: 18px 0;
+    position: sticky;
+    top: 0;
+    background: rgba(10, 10, 10, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 10;
+  }
+  header.site .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .brand {
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .brand .accent { color: var(--accent); }
+  .nav-links { display: flex; gap: 24px; align-items: center; }
+  .nav-links a {
+    font-size: 14px;
+    color: var(--text-2);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  /* ─── hero ─── */
+  section.hero {
+    padding: 96px 0 72px;
+    border-bottom: 1px solid var(--border);
+  }
+  h1 {
+    font-size: clamp(36px, 6vw, 56px);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    margin-bottom: 20px;
+  }
+  h1 .accent { color: var(--accent); }
+  .tagline {
+    font-size: clamp(17px, 2.2vw, 20px);
+    color: var(--text-2);
+    line-height: 1.5;
+    max-width: 580px;
+    margin-bottom: 36px;
+  }
+  .cta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 11px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.15s;
+    border: 1px solid transparent;
+    cursor: pointer;
+    font-family: var(--sans);
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #0a0a0a;
+  }
+  .btn-primary:hover {
+    background: #6ee7a3;
+    transform: translateY(-1px);
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border-color: var(--border);
+  }
+  .btn-secondary:hover {
+    border-color: var(--text-3);
+    background: var(--surface);
+  }
+
+  /* ─── section ─── */
+  section {
+    padding: 64px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 14px;
+  }
+  h2 {
+    font-size: clamp(24px, 3.5vw, 32px);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin-bottom: 28px;
+  }
+  h3 {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  p { color: var(--text-2); margin-bottom: 16px; }
+  p:last-child { margin-bottom: 0; }
+
+  /* ─── tools grid ─── */
+  .tools {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  @media (max-width: 600px) {
+    .tools { grid-template-columns: 1fr; }
+  }
+  .tool {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    transition: border-color 0.15s, transform 0.15s;
+  }
+  .tool:hover {
+    border-color: var(--text-3);
+    transform: translateY(-2px);
+  }
+  .tool h3 {
+    font-family: var(--mono);
+    font-size: 15px;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .tool p {
+    font-size: 14px;
+    color: var(--text-2);
+    margin-bottom: 0;
+    line-height: 1.5;
+  }
+
+  /* ─── code blocks ─── */
+  pre.code {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin: 16px 0;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--text);
+  }
+  pre.code .comment { color: var(--text-3); }
+  pre.code .string  { color: var(--accent); }
+  pre.code .key     { color: #93c5fd; }
+  code.inline {
+    font-family: var(--mono);
+    font-size: 0.9em;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: var(--accent);
+  }
+
+  /* ─── helpers ─── */
+  .small { font-size: 13.5px; color: var(--text-2); }
+  .platform-block { margin: 24px 0; }
+  .platform-block h3 { color: var(--text); margin-bottom: 8px; }
+  ul.compliance {
+    list-style: none;
+    margin: 16px 0;
+  }
+  ul.compliance li {
+    color: var(--text-2);
+    padding: 6px 0 6px 22px;
+    position: relative;
+    font-size: 14.5px;
+    line-height: 1.55;
+  }
+  ul.compliance li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* ─── footer ─── */
+  footer {
+    padding: 48px 0 64px;
+    color: var(--text-3);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  footer p { color: var(--text-3); }
+  footer a { color: var(--text-2); text-decoration: none; }
+  footer a:hover { color: var(--text); }
+  .disclaimer-line {
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 16px;
+    font-size: 12.5px;
+  }
+
+  a.inline-link {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s;
+  }
+  a.inline-link:hover { border-bottom-color: var(--accent); }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="container">
+    <a href="#" class="brand">quant<span class="accent">-mcp</span></a>
+    <nav class="nav-links">
+      <a href="#install">Install</a>
+      <a href="#tools">Tools</a>
+      <a href="https://github.com/mihaiandrei007/quant-mcp" target="_blank" rel="noopener">GitHub →</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <h1>Auditable ETF analytics<br>for your <span class="accent">AI client</span>.</h1>
+    <p class="tagline">A Model Context Protocol server that exposes UCITS ETF analytics — compare, factor metrics, Monte Carlo projection — as tools Claude, Cursor, Continue, or any MCP-compatible host can call. Every numeric output ships with its formula and source URL.</p>
+    <div class="cta">
+      <a href="#install" class="btn btn-primary">Install →</a>
+      <a href="https://github.com/mihaiandrei007/quant-mcp" target="_blank" rel="noopener" class="btn btn-secondary">View on GitHub</a>
+    </div>
+  </div>
+</section>
+
+<section id="tools">
+  <div class="container">
+    <div class="eyebrow">What you get</div>
+    <h2>Four tools, one MCP server.</h2>
+    <div class="tools">
+      <div class="tool">
+        <h3>ping</h3>
+        <p>Liveness check — confirms the server is reachable from your client.</p>
+      </div>
+      <div class="tool">
+        <h3>compare_etfs</h3>
+        <p>Two ISINs in, side-by-side metadata + OCF delta + AUM ratio + same-index check out.</p>
+      </div>
+      <div class="tool">
+        <h3>get_etf_factors</h3>
+        <p>1y / 3y / 5y / 10y annualised return, volatility, Sharpe, max drawdown, Calmar.</p>
+      </div>
+      <div class="tool">
+        <h3>monte_carlo_projection</h3>
+        <p>p10 / p50 / p90 percentile bands across N years for a weighted ETF basket.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="why">
+  <div class="container">
+    <div class="eyebrow">Why this exists</div>
+    <h2>Most AI clients can't talk to ETF data with formulas attached.</h2>
+    <p>quant-mcp is a thin Model Context Protocol server that wraps a curated UCITS dataset plus the standard finance formulas — Sharpe, drawdown, Calmar, weighted Monte Carlo — and exposes them as tools any MCP-compatible client can call.</p>
+    <p>Every output ships with the formula that produced it, links to issuer factsheets, and a disclaimer. No subjective language. No "buy / sell / hold". Data only — you decide what to do with it.</p>
+  </div>
+</section>
+
+<section id="install">
+  <div class="container">
+    <div class="eyebrow">Install</div>
+    <h2>Install in 60 seconds.</h2>
+    <p>Requires Python 3.12+ and <a href="https://docs.astral.sh/uv/" target="_blank" rel="noopener" class="inline-link">uv</a>. Clone the repo, sync deps, then point your MCP client at the directory.</p>
+
+<pre class="code"><span class="comment"># clone &amp; sync dependencies</span>
+git clone https://github.com/mihaiandrei007/quant-mcp.git
+cd quant-mcp
+uv sync</pre>
+
+    <div class="platform-block">
+      <h3>Claude Desktop</h3>
+      <p class="small">Edit <code class="inline">claude_desktop_config.json</code> (macOS: <code class="inline">~/Library/Application Support/Claude/</code> · Windows: <code class="inline">%APPDATA%\Claude\</code>) and add:</p>
+    </div>
+
+<pre class="code">{
+  <span class="key">"mcpServers"</span>: {
+    <span class="key">"quant-mcp"</span>: {
+      <span class="key">"command"</span>: <span class="string">"uv"</span>,
+      <span class="key">"args"</span>: [<span class="string">"--directory"</span>, <span class="string">"/absolute/path/to/quant-mcp"</span>, <span class="string">"run"</span>, <span class="string">"main.py"</span>]
+    }
+  }
+}</pre>
+
+    <div class="platform-block">
+      <h3>Claude Code · Cursor · Continue · Zed</h3>
+      <p class="small">Same config schema — drop the <code class="inline">mcpServers</code> block above into your client's MCP config file (e.g. <code class="inline">.mcp.json</code> for Claude Code). See <a href="https://github.com/mihaiandrei007/quant-mcp#install" target="_blank" rel="noopener" class="inline-link">full install docs</a>.</p>
+    </div>
+
+    <p>Restart your client → run <code class="inline">/mcp</code> → confirm <code class="inline">quant-mcp ✓ connected</code> with 4 tools.</p>
+  </div>
+</section>
+
+<section id="try">
+  <div class="container">
+    <div class="eyebrow">Try it</div>
+    <h2>Paste this into your AI client.</h2>
+
+<pre class="code">use monte_carlo_projection with portfolio
+[{<span class="key">"isin"</span>: <span class="string">"IE00BFMXXD54"</span>, <span class="key">"weight"</span>: 0.6},
+ {<span class="key">"isin"</span>: <span class="string">"IE00BK5BQT80"</span>, <span class="key">"weight"</span>: 0.4}],
+years 10, n_sims 2000</pre>
+
+    <p class="small">Projects a 60/40 VUAA / VWCE basket forward 10 years across 2 000 simulated paths. Returns p10 / p50 / p90 percentile bands per year + terminal multiplier + both disclaimers.</p>
+  </div>
+</section>
+
+<section id="compliance">
+  <div class="container">
+    <div class="eyebrow">Compliance</div>
+    <h2>Every payload, every tool.</h2>
+    <ul class="compliance">
+      <li>Tools return data only. No buy / sell / hold recommendations, no rankings.</li>
+      <li>No subjective language anywhere in output.</li>
+      <li>Every numeric field's formula appears in the tool's docstring AND as a sibling key in the JSON response.</li>
+      <li>Returns are decimal: <code class="inline">0.08</code> means +8% annualised, not 8%.</li>
+      <li>Annualisation: 252 trading days daily, 52 weekly, 12 monthly.</li>
+      <li>Every response includes a <code class="inline">disclaimer</code> field; <code class="inline">monte_carlo_projection</code> additionally returns a <code class="inline">monte_carlo_disclaimer</code> flagging the normal-return assumption.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="closing">
+  <div class="container">
+    <div class="eyebrow">v0 is free</div>
+    <h2>Twelve curated UCITS. MIT licensed.</h2>
+    <p>No accounts, no auth, no billing. Install it, use it, file an issue if something breaks.</p>
+    <div class="cta" style="margin-top: 28px;">
+      <a href="https://github.com/mihaiandrei007/quant-mcp" target="_blank" rel="noopener" class="btn btn-primary">Open on GitHub →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p class="disclaimer-line">Educational tool. Not investment advice. Always verify outputs against issuer factsheets.</p>
+    <p>Built by <a href="https://github.com/mihaiandrei007" target="_blank" rel="noopener">@mihaiandrei007</a> — feedback welcome via <a href="https://github.com/mihaiandrei007/quant-mcp/issues" target="_blank" rel="noopener">GitHub issues</a>.</p>
+  </div>
+</footer>
+
+</body>
+</html>
