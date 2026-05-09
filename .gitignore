@@ -1,0 +1,19 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Runtime-created cache (yfinance + fund info SQLite DB)
+data/quant-mcp.db
+
+# Internal session log — not for public repo
+SESSION_LOG.md
+
+# oh-my-claudecode local state
+.omc/
